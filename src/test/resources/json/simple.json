@@ -1,0 +1,8 @@
+{
+  "name":"Test",
+  "surname":"Autotest",
+  "city": ["Moscow", "Perm"],
+  "address":{
+    "street": "Lenina",
+    "house": "52a"}
+}
