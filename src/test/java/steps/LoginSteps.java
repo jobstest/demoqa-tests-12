@@ -44,5 +44,4 @@ public class LoginSteps {
     public byte[] attachScreenshot() {
         return ((TakesScreenshot)WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES);
     }
-
 }
