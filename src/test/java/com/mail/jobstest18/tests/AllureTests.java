@@ -9,13 +9,17 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import steps.IssueSteps;
 import steps.LoginSteps;
 
 import java.nio.charset.StandardCharsets;
 
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 import static io.qameta.allure.Allure.step;
+import static org.openqa.selenium.By.linkText;
+import static org.openqa.selenium.By.partialLinkText;
 
 public class AllureTests {
 
@@ -27,16 +31,18 @@ public class AllureTests {
             invalidMail = faker.internet().emailAddress(),
             errorText = "Login was unsuccessful. Please correct the errors and try again.";
 
+    String search = "jobstest/demoqa-tests-12";
+
     @DisplayName("Вход в ЛК")
     @Test
     void logIn() {
         SelenideLogger.addListener("allure", new AllureSelenide());
         open("http://demowebshop.tricentis.com/");
-        $(By.partialLinkText("Log in")).click();
+        $(partialLinkText("Log in")).click();
         $("#Email").setValue(mail);
         $("#Password").setValue(password);
         $("input[class='button-1 login-button']").click();
-        $(By.partialLinkText("test_web_shop@mail.ru")).shouldBe(visible);
+        $(partialLinkText("test_web_shop@mail.ru")).shouldBe(visible);
     }
 
     @DisplayName("Вход в ЛК c невалидным паролем")
@@ -47,7 +53,7 @@ public class AllureTests {
             open("http://demowebshop.tricentis.com/");
         });
         step("Нажать на ссылку Log in", () -> {
-            $(By.partialLinkText("Log in")).click();
+            $(partialLinkText("Log in")).click();
         });
         step("Заполнить поля Email и Password", () -> {
             $("#Email").setValue(mail);
@@ -89,10 +95,58 @@ public class AllureTests {
     void logInInvalidMailPassword() {
         SelenideLogger.addListener("allure", new AllureSelenide());
         open("http://demowebshop.tricentis.com/");
-        $(By.partialLinkText("Log in")).click();
+        $(partialLinkText("Log in")).click();
         $("#Email").setValue(invalidMail);
         $("#Password").setValue(invalidPassword);
         $("input[class='button-1 login-button']").click();
         $$(".validation-summary-errors").find(Condition.text(errorText)).shouldBe(visible);
     }
+
+    @Test
+    @DisplayName("Проверить наличие вкладки Issue")
+    void listenerTest() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+        open("https://github.com/");
+        $(".header-search-input").click();
+        $(".header-search-input").setValue(search);
+        $(".header-search-input").submit();
+        $(linkText("jobstest/demoqa-tests-12")).click();
+        $(partialLinkText("Issue")).shouldBe(visible);
+        $(partialLinkText("Issue")).shouldHave(Condition.text("Issue"));
+    }
+
+    @Test
+    @DisplayName("Проверить наличие вкладки Issue")
+    void lambdaTest() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+        step("Открыть главную страницу", () -> {
+            open("https://github.com/");
+        });
+        step("Найти репозиторий в поисковой строке ", () -> {
+            $(".header-search-input").click();
+            $(".header-search-input").setValue(search);
+            $(".header-search-input").submit();
+        });
+        step("Открыть репозиторий", () -> {
+            $(linkText("jobstest/demoqa-tests-12")).click();
+        });
+        step("Проверить наличие вкладки {Issue}", () -> {
+            $(partialLinkText("Issue")).shouldBe(visible);
+            $(partialLinkText("Issue")).shouldHave(Condition.text("Issue"));
+        });
+    }
+
+    @Test
+    @DisplayName("Проверить наличие вкладки Issue")
+    void annotationTest() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+        IssueSteps isteps = new IssueSteps();
+
+        isteps.openMainPage();
+        isteps.searchRepo(search);
+        isteps.openRepo();
+        isteps.checkIssue();
+    }
+
+
 }
