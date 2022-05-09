@@ -8,14 +8,12 @@ import io.qameta.allure.*;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import steps.IssueSteps;
 import steps.LoginSteps;
 
 import java.nio.charset.StandardCharsets;
 
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 import static io.qameta.allure.Allure.step;
 import static org.openqa.selenium.By.linkText;
@@ -51,17 +49,21 @@ public class AllureTests {
         SelenideLogger.addListener("allure", new AllureSelenide());
         step("Открыть главную страницу", () -> {
             open("http://demowebshop.tricentis.com/");
-        });
+            }
+        );
         step("Нажать на ссылку Log in", () -> {
             $(partialLinkText("Log in")).click();
-        });
+            }
+        );
         step("Заполнить поля Email и Password", () -> {
             $("#Email").setValue(mail);
             $("#Password").setValue(invalidPassword);
-        });
+            }
+        );
         step("Нажать на кнопку Log in", () -> {
             $("input[class='button-1 login-button']").click();
-        });
+            }
+        );
         step("Проверить сообщение об ошибке", () -> {
             $$(".validation-summary-errors").find(Condition.text(errorText)).shouldBe(visible);
             Allure.getLifecycle().addAttachment(
@@ -69,7 +71,8 @@ public class AllureTests {
                     "text/html",
                     "html",
                     WebDriverRunner.getWebDriver().getPageSource().getBytes(StandardCharsets.UTF_8));
-        });
+            }
+        );
     }
 
     @DisplayName("Вход в ЛК c невалидной почтой")
@@ -121,19 +124,23 @@ public class AllureTests {
         SelenideLogger.addListener("allure", new AllureSelenide());
         step("Открыть главную страницу", () -> {
             open("https://github.com/");
-        });
+            }
+        );
         step("Найти репозиторий в поисковой строке ", () -> {
             $(".header-search-input").click();
             $(".header-search-input").setValue(search);
             $(".header-search-input").submit();
-        });
+            }
+        );
         step("Открыть репозиторий", () -> {
             $(linkText("jobstest/demoqa-tests-12")).click();
-        });
+            }
+        );
         step("Проверить наличие вкладки {Issue}", () -> {
             $(partialLinkText("Issue")).shouldBe(visible);
             $(partialLinkText("Issue")).shouldHave(Condition.text("Issue"));
-        });
+            }
+        );
     }
 
     @Test
@@ -147,6 +154,4 @@ public class AllureTests {
         isteps.openRepo();
         isteps.checkIssue();
     }
-
-
 }
